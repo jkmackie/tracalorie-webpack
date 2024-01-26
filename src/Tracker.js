@@ -27,12 +27,38 @@ class CalorieTracker {
     this._render();
   }
 
+  editMeal(editedMeal, id) {
+    const index = this._meals.findIndex((meal) => meal.id === id);
+    if (index !== -1) {
+      const existMealCal = this._meals[index].calories;
+      this._meals[index] = editedMeal; // Update meal details
+      this._totalCalories += editedMeal.calories - existMealCal;
+      Storage.updateTotalCalories(this._totalCalories);
+      Storage.saveMeal(editedMeal, id);
+      //persist storage when item name & value are consecutively changed
+      window.location.reload();
+    }
+  }
+
+  editWorkout(editedWorkout, id) {
+    const index = this._workouts.findIndex((workout) => workout.id === id);
+    if (index !== -1) {
+      const existWorkoutCal = this._workouts[index].calories;
+      this._workouts[index] = editedWorkout; // Update workout details
+      this._totalCalories -= editedWorkout.calories - existWorkoutCal;
+      Storage.updateTotalCalories(this._totalCalories);
+      Storage.saveWorkout(editedWorkout, id);
+      //persist storage when item name & value are consecutively changed
+      window.location.reload();
+    }
+  }
+
   addWorkout(workout) {
     this._workouts.push(workout);
     this._totalCalories -= workout.calories;
     Storage.updateTotalCalories(this._totalCalories);
     Storage.saveWorkout(workout);
-    this._displaynewWorkout(workout);
+    this._displayNewWorkout(workout);
     this._render();
   }
 
@@ -79,7 +105,7 @@ class CalorieTracker {
 
   loadItems() {
     this._meals.forEach((meal) => this._displayNewMeal(meal));
-    this._workouts.forEach((workout) => this._displaynewWorkout(workout));
+    this._workouts.forEach((workout) => this._displayNewWorkout(workout));
   }
 
   // Private Methods //
@@ -147,6 +173,7 @@ class CalorieTracker {
     progressEl.style.width = `${width}%`;
   }
 
+  // CSS styling from bootstrap
   _displayNewMeal(meal) {
     const mealsEl = document.getElementById('meal-items');
     const mealEl = document.createElement('div');
@@ -154,43 +181,53 @@ class CalorieTracker {
     mealEl.setAttribute('data-id', meal.id);
     mealEl.innerHTML = `
     <div class="card-body">
-    <div class="d-flex align-items-center justify-content-between">
-      <h4 class="mx-1">${meal.name}</h4>
-      <div
-        class="fs-1 bg-primary text-white text-center rounded-2 px-2 px-sm-5"
-      >
-        ${meal.calories}
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h4 class="mx-1" contentEditable="false" id="meal-name-${meal.id}">${meal.name}</h4>
+          <div class="fs-1 bg-primary text-white text-center rounded-2 px-2 px-sm-5" id="meal-calories-${meal.id}">
+            ${meal.calories}
+          </div>
+        </div>
+        <div class="button-group">
+          <button class="edit-btn btn btn-primary btn-sm mx-2" edit-btn-id="${meal.id}">         
+            <i class="fa-solid fa-pen-to-square" pen-btn-id="${meal.id}"></i>          
+          </button>
+          <button class="delete btn btn-danger btn-sm mx-2">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
       </div>
-      <button class="delete btn btn-danger btn-sm mx-2">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-    </div>
-    `;
+    </div>    
+`;
 
     mealsEl.appendChild(mealEl);
   }
 
-  _displaynewWorkout(workout) {
+  _displayNewWorkout(workout) {
     const workoutsEl = document.getElementById('workout-items');
     const workoutEl = document.createElement('div');
     workoutEl.classList.add('card', 'my-2');
     workoutEl.setAttribute('data-id', workout.id);
     workoutEl.innerHTML = `
     <div class="card-body">
-    <div class="d-flex align-items-center justify-content-between">
-      <h4 class="mx-1">${workout.name}</h4>
-      <div
-        class="fs-1 bg-secondary text-white text-center rounded-2 px-2 px-sm-5"
-      >
-        ${workout.calories}
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h4 class="mx-1" contentEditable="false" id="workout-name-${workout.id}">${workout.name}</h4>
+          <div class="fs-1 bg-primary text-white text-center rounded-2 px-2 px-sm-5" id="workout-calories-${workout.id}">
+            ${workout.calories}
+          </div>
+        </div>
+        <div class="button-group">
+          <button class="edit-btn btn btn-primary btn-sm mx-2" edit-btn-id="${workout.id}">         
+            <i class="fa-solid fa-pen-to-square" pen-btn-id="${workout.id}"></i>          
+          </button>
+          <button class="delete btn btn-danger btn-sm mx-2">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
       </div>
-      <button class="delete btn btn-danger btn-sm mx-2">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-    </div>
-    `;
+    </div>    
+`;
 
     workoutsEl.appendChild(workoutEl);
   }

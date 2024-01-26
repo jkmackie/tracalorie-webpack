@@ -36,10 +36,16 @@ class Storage {
     return meals;
   }
 
-  static saveMeal(meal) {
+  static saveMeal(meal, id) {
     const meals = Storage.getMeals();
-    meals.push(meal);
-    localStorage.setItem('meals', JSON.stringify(meals)); // array to string
+    const existingMealIndex = meals.findIndex((meal) => meal.id === id);
+
+    if (existingMealIndex !== -1) {
+      meals[existingMealIndex] = meal; // Update existing meal
+    } else {
+      meals.push(meal); // Add new meal
+    }
+    localStorage.setItem('meals', JSON.stringify(meals));
   }
 
   static removeMeal(id) {
@@ -49,7 +55,7 @@ class Storage {
         meals.splice(index, 1); // remove
       }
     });
-    // re-save without removed meal
+    // re-save without the meal
     localStorage.setItem('meals', JSON.stringify(meals));
   }
 
@@ -63,10 +69,16 @@ class Storage {
     return workouts;
   }
 
-  static saveWorkout(workout) {
+  static saveWorkout(workout, id) {
     const workouts = Storage.getWorkouts();
-    workouts.push(workout);
-    localStorage.setItem('workouts', JSON.stringify(workouts)); // array to string
+    const existingWorkoutIndex = workouts.findIndex((workout) => workout.id === id);
+
+    if (existingWorkoutIndex !== -1) {
+      workouts[existingWorkoutIndex] = workout; // Update existing workout
+    } else {
+      workouts.push(workout); // Add new workout
+    }
+    localStorage.setItem('workouts', JSON.stringify(workouts));
   }
 
   static removeWorkout(id) {
