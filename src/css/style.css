@@ -1,4 +1,5 @@
 .editable {
     border: 3px dashed darkorange; /* Dashed border */
-    padding: 4px; /* Some padding */
+    padding: 4px;
+    cursor: text; /* Some padding */
 }
